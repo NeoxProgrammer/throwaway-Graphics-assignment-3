@@ -37,6 +37,9 @@ void LoadMesh(Mesh* mesh, const char* path)
     obj_mesh = fast_obj_read(path);
     
     mesh->positions.resize(obj_mesh->index_count);
+	mesh->normals.resize(obj_mesh->index_count);
+	mesh->texture_coordinates.resize(obj_mesh->index_count);
+
 
 	//copy the positions from the obj mesh to our mesh
     for (fastObjUInt i = 0; i < obj_mesh->index_count; i++)
@@ -44,6 +47,20 @@ void LoadMesh(Mesh* mesh, const char* path)
 		Vector3* obj_positions_buffer = (Vector3*)obj_mesh->positions;// we can cast the positions buffer to a Vector3* because we know that the positions are stored as 3 floats per vertex 
 		fastObjUInt obj_position_index = obj_mesh->indices[i].p;// the index of the position in the obj mesh's positions buffer
 		mesh->positions[i] = obj_positions_buffer[obj_position_index];// copy the position from the obj mesh to our mesh
+    }
+
+    for (fastObjUInt i = 0; i < obj_mesh->index_count; i++)
+    {
+		Vector3* obj_normals_buffer = (Vector3*)obj_mesh->normals;// we can cast the normals buffer to a Vector3* because we know that the normals are stored as 3 floats per vertex 
+		fastObjUInt obj_normal_index = obj_mesh->indices[i].n;// the index of the normal in the obj mesh's normals buffer
+		mesh->normals[i] = obj_normals_buffer[obj_normal_index];// copy the normal from the obj mesh to our mesh
+    }
+
+    for (fastObjUInt i = 0; i < obj_mesh->index_count; i++)
+    {
+		Vector2* obj_texture_coordinates_buffer = (Vector2*)obj_mesh->texcoords;// we can cast the texture coordinates buffer to a Vector2* because we know that the texture coordinates are stored as 2 floats per vertex 
+		fastObjUInt obj_texture_coordinate_index = obj_mesh->indices[i].t;// the index of the texture coordinate in the obj mesh's texture coordinates buffer
+		mesh->texture_coordinates[i] = obj_texture_coordinates_buffer[obj_texture_coordinate_index];// copy the texture coordinate from the obj mesh to our mesh
     }
 
     fast_obj_destroy(obj_mesh);
