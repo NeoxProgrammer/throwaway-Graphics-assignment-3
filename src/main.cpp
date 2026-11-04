@@ -85,6 +85,7 @@ int main()
     GLuint mesh_positions_vbo = GL_NONE;
 
     glGenVertexArrays(1, &mesh_vao);
+
     glGenBuffers(1, &mesh_positions_vbo);
 
     glBindVertexArray(mesh_vao);
