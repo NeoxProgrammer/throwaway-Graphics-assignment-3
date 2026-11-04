@@ -137,6 +137,7 @@ int main()
 
         glUseProgram(shader_program);
         GLint loc = glGetUniformLocation(shader_program, "u_transform");
+
         glUniformMatrix4fv(loc, 1, GL_FALSE, MatrixToFloat(world));
 
 		glBindVertexArray(mesh_vao);// Bind the VAO to use the state we recorded earlier
@@ -168,6 +169,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
     {
         // Bound our array to be [0..4]
         ++app->object_index %= 2;
+		std::cout << "Object index: " << app->object_index << std::endl;
     }
 }
 
@@ -189,7 +191,7 @@ void Init(App* app)
     app->window = glfwCreateWindow(1600, 900, "Graphics 1", nullptr, nullptr);
     assert(app->window != nullptr);
 
-    glfwSetWindowUserPointer(app->window, &app);
+    glfwSetWindowUserPointer(app->window, app);
     glfwSetKeyCallback(app->window, KeyCallback);
 
     glfwMakeContextCurrent(app->window);
