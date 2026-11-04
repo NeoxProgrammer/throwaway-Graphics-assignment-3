@@ -167,7 +167,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
     if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
     {
         // Bound our array to be [0..4]
-        ++app->object_index %= 5;
+        ++app->object_index %= 2;
     }
 }
 
