@@ -115,6 +115,7 @@ int main()
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);           
 
+
     glBindVertexArray(GL_NONE);                                 // "Stop recording vertex buffer state"
 
     GLuint vs_shader = LoadShader(GL_VERTEX_SHADER, "./assets/shaders/a3_mesh.vert");
