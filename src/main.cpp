@@ -81,7 +81,7 @@ int main()
     Init(&app);
 
     Mesh plane;
-    LoadMesh(&plane, "./assets/meshes/monkey.obj");
+    LoadMesh(&plane, "./assets/meshes/plane.obj");
     
     GLuint mesh_vao = GL_NONE;
     GLuint mesh_positions_vbo = GL_NONE;
@@ -137,8 +137,12 @@ int main()
 
         glUseProgram(shader_program);
         GLint loc = glGetUniformLocation(shader_program, "u_transform");
+		GLint loc2 = glGetUniformLocation(shader_program, "u_mode");
+		// set the uniform variable u_mode to the value of app.object_index
+
 
         glUniformMatrix4fv(loc, 1, GL_FALSE, MatrixToFloat(world));
+        glUniform1i(loc2, app.object_index);
 
 		glBindVertexArray(mesh_vao);// Bind the VAO to use the state we recorded earlier
 
@@ -170,6 +174,8 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         // Bound our array to be [0..4]
         ++app->object_index %= 2;
 		std::cout << "Object index: " << app->object_index << std::endl;
+        
+
     }
 }
 

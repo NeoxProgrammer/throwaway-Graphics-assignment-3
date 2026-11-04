@@ -5,7 +5,8 @@ out vec4 frag_colour;
 in vec2 frag_tcoords; 
 in vec3 frag_normal; 
 
-int u_mode = 0;
+uniform int u_mode;// change this to a global uniform variable in the future
+
 
 void main()
 {
