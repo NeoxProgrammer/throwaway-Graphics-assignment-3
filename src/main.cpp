@@ -84,6 +84,10 @@ int main()
     GLuint mesh_vao = GL_NONE;
     GLuint mesh_positions_vbo = GL_NONE;
 
+	GLuint mesh_normals_vbo = GL_NONE;//create a new VBO for the normals
+
+
+
     glGenVertexArrays(1, &mesh_vao);
     glGenBuffers(1, &mesh_positions_vbo);
 
@@ -91,10 +95,14 @@ int main()
 
     glBindBuffer(GL_ARRAY_BUFFER, mesh_positions_vbo);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+
     glBufferData(GL_ARRAY_BUFFER, plane.positions.size() * sizeof(Vector3) , plane.positions.data(), GL_STATIC_DRAW);
-	//glBufferData(GL_ARRAY_BUFFER, plane.normals.size() * sizeof(Vector3), plane.normals.data(), GL_STATIC_DRAW);
-	//glBufferData(GL_ARRAY_BUFFER, plane.texture_coordinates.size() * sizeof(Vector2), plane.texture_coordinates.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, plane.normals.size() * sizeof(Vector3), plane.normals.data(), GL_STATIC_DRAW);// this line is not correct, we need to create a new VBO for the normals and bind it to the VAO, but for now we will just use the same VBO for the normals
+    glBufferData(GL_ARRAY_BUFFER, plane.texture_coordinates.size() * sizeof(Vector2), plane.texture_coordinates.data(), GL_STATIC_DRAW);
     
+
+
     glEnableVertexAttribArray(0);
 
     glBindVertexArray(GL_NONE);                                 // "Stop recording vertex buffer state"
