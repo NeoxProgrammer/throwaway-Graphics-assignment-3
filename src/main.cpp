@@ -93,6 +93,7 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, mesh_positions_vbo);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
     glBufferData(GL_ARRAY_BUFFER, plane.positions.size() * sizeof(Vector3) , plane.positions.data(), GL_STATIC_DRAW);
+
 	//glBufferData(GL_ARRAY_BUFFER, plane.normals.size() * sizeof(Vector3), plane.normals.data(), GL_STATIC_DRAW);
 	//glBufferData(GL_ARRAY_BUFFER, plane.texture_coordinates.size() * sizeof(Vector2), plane.texture_coordinates.data(), GL_STATIC_DRAW);
     
