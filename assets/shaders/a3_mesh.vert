@@ -1,8 +1,8 @@
 #version 430 core
 
 layout(location = 0) in vec3 vertex_position;
-//layout(location = 1) in vec3 vertex_normals;
-//layout(location = 2) in vec3 vertex_tcoords;
+layout(location = 1) in vec3 vertex_normals;
+layout(location = 2) in vec2 vertex_tcoords;
 
 out vec3 ndc;
 

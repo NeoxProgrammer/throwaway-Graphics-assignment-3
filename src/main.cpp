@@ -75,6 +75,8 @@ void Init(App* app);
 
 int main()
 {
+    // we still need to render the texture coridanates and normals
+    
     App app{};
     Init(&app);
 
@@ -83,33 +85,50 @@ int main()
     
     GLuint mesh_vao = GL_NONE;
     GLuint mesh_positions_vbo = GL_NONE;
+	GLuint mesh_normals_vbo = GL_NONE;
+	GLuint mesh_texture_coordinates_vbo = GL_NONE;
 
-    glGenVertexArrays(1, &mesh_vao);
+	glGenVertexArrays(1, &mesh_vao);// Generate a vertex array object (VAO) to store the state of our vertex buffers
 
-    glGenBuffers(1, &mesh_positions_vbo);
+	glGenBuffers(1, &mesh_positions_vbo);// Generate a vertex buffer object (VBO) to store the positions of our mesh
 
-    glBindVertexArray(mesh_vao);
+	glGenBuffers(1, &mesh_normals_vbo);// Generate a vertex buffer object (VBO) to store the normals of our mesh
 
-    glBindBuffer(GL_ARRAY_BUFFER, mesh_positions_vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glBufferData(GL_ARRAY_BUFFER, plane.positions.size() * sizeof(Vector3) , plane.positions.data(), GL_STATIC_DRAW);
+	glGenBuffers(1, &mesh_texture_coordinates_vbo);// Generate a vertex buffer object (VBO) to store the texture coordinates of our mesh
 
-	//glBufferData(GL_ARRAY_BUFFER, plane.normals.size() * sizeof(Vector3), plane.normals.data(), GL_STATIC_DRAW);
-	//glBufferData(GL_ARRAY_BUFFER, plane.texture_coordinates.size() * sizeof(Vector2), plane.texture_coordinates.data(), GL_STATIC_DRAW);
-    
+	glBindVertexArray(mesh_vao); // "Start recording vertex buffer state"
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh_positions_vbo);// Bind the positions VBO to the GL_ARRAY_BUFFER target
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr); // Tell OpenGL how to interpret the data in the positions VBO
+	glBufferData(GL_ARRAY_BUFFER, plane.positions.size() * sizeof(Vector3), plane.positions.data(), GL_STATIC_DRAW); // Upload the data in the positions VBO to the GPU
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh_normals_vbo);// Bind the normals VBO to the GL_ARRAY_BUFFER target
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr); // Tell OpenGL how to interpret the data in the normals VBO
+	glBufferData(GL_ARRAY_BUFFER, plane.normals.size() * sizeof(Vector3), plane.normals.data(), GL_STATIC_DRAW); // Upload the data in the normals VBO to the GPU 
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh_texture_coordinates_vbo);// Bind the texture coordinates VBO to the GL_ARRAY_BUFFER target
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr); // Tell OpenGL how to interpret the data in the texture coordinates VBO
+	glBufferData(GL_ARRAY_BUFFER, plane.texture_coordinates.size() * sizeof(Vector2), plane.texture_coordinates.data(), GL_STATIC_DRAW); // Upload the data in the texture coordinates VBO to the GPU
+
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);           
 
     glBindVertexArray(GL_NONE);                                 // "Stop recording vertex buffer state"
 
     GLuint vs_shader = LoadShader(GL_VERTEX_SHADER, "./assets/shaders/a3_mesh.vert");
     GLuint fs_shader = LoadShader(GL_FRAGMENT_SHADER, "./assets/shaders/a3_mesh.frag");
     GLuint shader_program = LoadProgram(vs_shader, fs_shader);
+
+
 	
 
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(app.window))
     {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
         glClearDepth(1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -119,9 +138,13 @@ int main()
         GLint loc = glGetUniformLocation(shader_program, "u_transform");
         glUniformMatrix4fv(loc, 1, GL_FALSE, MatrixToFloat(world));
 
-        glBindVertexArray(mesh_vao);
+		glBindVertexArray(mesh_vao);// Bind the VAO to use the state we recorded earlier
 
-        glDrawArrays(GL_TRIANGLES, 0, plane.positions.size());
+		glDrawArrays(GL_TRIANGLES, 0, plane.positions.size());// Draw the mesh using the positions VBO
+		// normals and texture coordinates are not used in this draw call, but they are still bound to the VAO and can be used in the shader if needed so thats what we are going to do now
+		// we can use the normals and texture coordinates in the shader by using the layout(location = 1) and layout(location = 2) qualifiers in the vertex shader to specify which attribute location to use for the normals and texture coordinates
+		// we can also use the normals and texture coordinates in the fragment shader by using the in qualifier to specify which attribute location to use for the normals and texture coordinates
+
 
         glfwSwapBuffers(app.window);
         glfwPollEvents();
