@@ -5,13 +5,15 @@ layout(location = 1) in vec3 vertex_normals;
 layout(location = 2) in vec2 vertex_tcoords;
 
 out vec3 ndc;
-out vec2 frag_tcoords
+out vec2 frag_tcoords; 
+out vec3 frag_normal; 
 
 uniform mat4 u_transform;
 
 void main()
 {
-    frag_tcoords = vertex_tcoords
+    frag_normal = vertex_normals; 
+    frag_tcoords = vertex_tcoords;
     ndc = vertex_position;
     vec4 pos = u_transform * vec4(vertex_position, 1.0);
     gl_Position = pos;
