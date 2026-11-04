@@ -137,12 +137,12 @@ int main()
 
         glUseProgram(shader_program);
         GLint loc = glGetUniformLocation(shader_program, "u_transform");
-		GLint loc2 = glGetUniformLocation(shader_program, "u_mode");
+		GLint loc2 = glGetUniformLocation(shader_program, "u_mode");// Get the location of the uniform variable u_mode in the shader program
 		// set the uniform variable u_mode to the value of app.object_index
 
 
         glUniformMatrix4fv(loc, 1, GL_FALSE, MatrixToFloat(world));
-        glUniform1i(loc2, app.object_index);
+		glUniform1i(loc2, app.object_index);// Set the value of the uniform variable u_mode to the value of app.object_index
 
 		glBindVertexArray(mesh_vao);// Bind the VAO to use the state we recorded earlier
 
