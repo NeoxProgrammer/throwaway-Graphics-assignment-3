@@ -91,7 +91,10 @@ int main()
 
     glBindBuffer(GL_ARRAY_BUFFER, mesh_positions_vbo);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glBufferData(GL_ARRAY_BUFFER, plane.positions.size() * sizeof(Vector3), plane.positions.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, plane.positions.size() * sizeof(Vector3) , plane.positions.data(), GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, plane.normals.size() * sizeof(Vector3), plane.normals.data(), GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, plane.texture_coordinates.size() * sizeof(Vector2), plane.texture_coordinates.data(), GL_STATIC_DRAW);
+    
     glEnableVertexAttribArray(0);
 
     glBindVertexArray(GL_NONE);                                 // "Stop recording vertex buffer state"
@@ -99,6 +102,7 @@ int main()
     GLuint vs_shader = LoadShader(GL_VERTEX_SHADER, "./assets/shaders/a3_mesh.vert");
     GLuint fs_shader = LoadShader(GL_FRAGMENT_SHADER, "./assets/shaders/a3_mesh.frag");
     GLuint shader_program = LoadProgram(vs_shader, fs_shader);
+	
 
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(app.window))
