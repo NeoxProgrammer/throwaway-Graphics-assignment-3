@@ -87,8 +87,9 @@ void LoadMesh(Mesh* mesh, const char* path)
 
     glGenVertexArrays(1, &mesh->vao);
     glGenBuffers(1, &mesh->vbo_positions);
-    glGenBuffers(1, &mesh->vbo_tcoords);
     glGenBuffers(1, &mesh->vbo_normals);
+    glGenBuffers(1, &mesh->vbo_tcoords);
+   
     // TODO -- generate vbo handles for mesh normals and mesh tcoords
 
     glBindVertexArray(mesh->vao);
@@ -160,25 +161,23 @@ int main()
         glClearDepth(1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Matrix world = MatrixScale(0.5f, 0.5f, 0.5f) * MatrixRotateY(glfwGetTime() * 100.0f * DEG2RAD);
+        //Matrix world = MatrixScale(0.5f, 0.5f, 0.5f) * MatrixRotateY(glfwGetTime() * 100.0f * DEG2RAD);
+        Matrix world = MatrixIdentity(); 
+        //Matrix world = MatrixRotateY(180.0f * DEG2RAD);
+
 
         glUseProgram(shader_program);
-        GLint loc = glGetUniformLocation(shader_program, "u_transform");
-		GLint loc2 = glGetUniformLocation(shader_program, "u_mode");// Get the location of the uniform variable u_mode in the shader program
-		// set the uniform variable u_mode to the value of app.object_index
-
-
-        glUniformMatrix4fv(loc, 1, GL_FALSE, MatrixToFloat(world));
-		glUniform1i(loc2, app.object_index);// Set the value of the uniform variable u_mode to the value of app.object_index
+        GLint loc_transform = glGetUniformLocation(shader_program, "u_transform");
+        GLint loc_style = glGetUniformLocation(shader_program, "u_style");
+        GLint loc_color_space = glGetUniformLocation(shader_program, "u_color_space");
+        glUniformMatrix4fv(loc_transform, 1, GL_FALSE, MatrixToFloat(world));
+        glUniform1i(loc_style, app.attribute_color);
+        glUniform1i(loc_color_space, app.color_space);
 
         const Mesh& mesh = meshes[app.object_index];
         glBindVertexArray(mesh.vao);
-        glDrawArrays(GL_TRIANGLES, 0, mesh.index_count);
-		
-		// normals and texture coordinates are not used in this draw call, but they are still bound to the VAO and can be used in the shader if needed so thats what we are going to do now
-		// we can use the normals and texture coordinates in the shader by using the layout(location = 1) and layout(location = 2) qualifiers in the vertex shader to specify which attribute location to use for the normals and texture coordinates
-		// we can also use the normals and texture coordinates in the fragment shader by using the in qualifier to specify which attribute location to use for the normals and texture coordinates
 
+        glDrawArrays(GL_TRIANGLES, 0, mesh.index_count);
 
         glfwSwapBuffers(app.window);
         glfwPollEvents();
@@ -202,9 +201,20 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         // Bound our array to be [0..4]
         ++app->object_index %= 2;
 		std::cout << "Object index: " << app->object_index << std::endl;
-        
-
     }
+
+    if (key == GLFW_KEY_C && action == GLFW_PRESS)
+    {
+        // Bound our array to be [0..2]
+        ++app->attribute_color %= 3;
+    }
+    if (key == GLFW_KEY_V && action == GLFW_PRESS)
+    {
+        // Bound our array to be [0..1]
+        ++app->color_space %= 2;
+    }
+
+
 }
 
 void Init(App* app)
