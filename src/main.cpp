@@ -17,6 +17,15 @@
 void APIENTRY DebugCallback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char* message, const void* userParam);
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+enum ShaderVertexAttribute : int
+{
+    ATTRIBUTE_POSITIONS,
+    ATTRIBUTE_NORMALS,
+    ATTRIBUTE_TCOORDS
+};
+
+
+
 struct App
 {
     GLFWwindow* window;
@@ -28,6 +37,11 @@ struct Mesh
     std::vector<Vector3> positions;
 	std::vector<Vector3> normals;
 	std::vector<Vector2> texture_coordinates;//texture coordinates
+
+    GLuint vao;
+    GLuint vbo_positions;
+    GLuint vbo_tcoords;
+    GLuint vbo_normals;
     //fastObjMesh cpu_mesh;
 };
 
@@ -64,6 +78,43 @@ void LoadMesh(Mesh* mesh, const char* path)
     }
 
     fast_obj_destroy(obj_mesh);
+
+    glGenVertexArrays(1, &mesh->vao);
+    glGenBuffers(1, &mesh->vbo_positions);
+    glGenBuffers(1, &mesh->vbo_tcoords);
+    glGenBuffers(1, &mesh->vbo_normals);
+    // TODO -- generate vbo handles for mesh normals and mesh tcoords
+
+    glBindVertexArray(mesh->vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo_positions);
+    glVertexAttribPointer(ATTRIBUTE_POSITIONS, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glBufferData(GL_ARRAY_BUFFER, mesh->positions.size() * sizeof(Vector3), mesh->positions.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo_tcoords);
+    glVertexAttribPointer(ATTRIBUTE_TCOORDS, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glBufferData(GL_ARRAY_BUFFER, mesh->texture_coordinates.size() * sizeof(Vector2), mesh->texture_coordinates.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(ATTRIBUTE_TCOORDS);
+
+
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo_normals);
+    glVertexAttribPointer(ATTRIBUTE_NORMALS, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glBufferData(GL_ARRAY_BUFFER, mesh->normals.size() * sizeof(Vector3), mesh->normals.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(ATTRIBUTE_NORMALS);
+
+
+
+    
+
+    
+
+
+
+    // TODO -- describe vertex buffers for normals (1) and tcoords (2)
+
+    glBindVertexArray(GL_NONE);
+
 }
 
 void UnloadMesh(Mesh* mesh)
@@ -85,37 +136,7 @@ int main()
     LoadMesh(&plane, "./assets/meshes/plane.obj");
     LoadMesh(&head, "./assets/meshes/head.obj"); 
     
-    GLuint mesh_vao = GL_NONE;
-    GLuint mesh_positions_vbo = GL_NONE;
-	GLuint mesh_normals_vbo = GL_NONE;
-	GLuint mesh_texture_coordinates_vbo = GL_NONE;
-
-	glGenVertexArrays(1, &mesh_vao);// Generate a vertex array object (VAO) to store the state of our vertex buffers
-
-	glGenBuffers(1, &mesh_positions_vbo);// Generate a vertex buffer object (VBO) to store the positions of our mesh
-
-	glGenBuffers(1, &mesh_normals_vbo);// Generate a vertex buffer object (VBO) to store the normals of our mesh
-
-	glGenBuffers(1, &mesh_texture_coordinates_vbo);// Generate a vertex buffer object (VBO) to store the texture coordinates of our mesh
-
-	glBindVertexArray(mesh_vao); // "Start recording vertex buffer state"
-
-	glBindBuffer(GL_ARRAY_BUFFER, mesh_positions_vbo);// Bind the positions VBO to the GL_ARRAY_BUFFER target
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr); // Tell OpenGL how to interpret the data in the positions VBO
-	glBufferData(GL_ARRAY_BUFFER, plane.positions.size() * sizeof(Vector3), plane.positions.data(), GL_STATIC_DRAW); // Upload the data in the positions VBO to the GPU
-
-
-	glBindBuffer(GL_ARRAY_BUFFER, mesh_normals_vbo);// Bind the normals VBO to the GL_ARRAY_BUFFER target
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr); // Tell OpenGL how to interpret the data in the normals VBO
-	glBufferData(GL_ARRAY_BUFFER, plane.normals.size() * sizeof(Vector3), plane.normals.data(), GL_STATIC_DRAW); // Upload the data in the normals VBO to the GPU 
-
-	glBindBuffer(GL_ARRAY_BUFFER, mesh_texture_coordinates_vbo);// Bind the texture coordinates VBO to the GL_ARRAY_BUFFER target
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr); // Tell OpenGL how to interpret the data in the texture coordinates VBO
-	glBufferData(GL_ARRAY_BUFFER, plane.texture_coordinates.size() * sizeof(Vector2), plane.texture_coordinates.data(), GL_STATIC_DRAW); // Upload the data in the texture coordinates VBO to the GPU
-
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);           
+     
 
 
     glBindVertexArray(GL_NONE);                                 // "Stop recording vertex buffer state"
