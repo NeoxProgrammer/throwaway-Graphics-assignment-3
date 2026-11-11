@@ -28,6 +28,9 @@ enum ShaderVertexAttribute : int
 
 struct App
 {
+    
+    int attribute_color;
+    int color_space;
     GLFWwindow* window;
     int object_index;
 };
