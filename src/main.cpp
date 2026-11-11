@@ -34,6 +34,8 @@ struct App
 
 struct Mesh
 {
+
+    int index_count; 
     std::vector<Vector3> positions;
 	std::vector<Vector3> normals;
 	std::vector<Vector2> texture_coordinates;//texture coordinates
@@ -49,7 +51,8 @@ void LoadMesh(Mesh* mesh, const char* path)
 {
     fastObjMesh* obj_mesh;
     obj_mesh = fast_obj_read(path);
-    
+
+    mesh->index_count = obj_mesh->index_count;
     mesh->positions.resize(obj_mesh->index_count);
 	mesh->normals.resize(obj_mesh->index_count);
 	mesh->texture_coordinates.resize(obj_mesh->index_count);
@@ -133,13 +136,11 @@ int main()
 
     Mesh plane;
     Mesh head;
-    LoadMesh(&plane, "./assets/meshes/plane.obj");
-    LoadMesh(&head, "./assets/meshes/head.obj"); 
+    Mesh meshes[2]; 
+    LoadMesh(&meshes[0], "./assets/meshes/plane.obj");
+    LoadMesh(&meshes[1], "./assets/meshes/head.obj");
     
-     
-
-
-    glBindVertexArray(GL_NONE);                                 // "Stop recording vertex buffer state"
+                                 
 
     GLuint vs_shader = LoadShader(GL_VERTEX_SHADER, "./assets/shaders/a3_mesh.vert");
     GLuint fs_shader = LoadShader(GL_FRAGMENT_SHADER, "./assets/shaders/a3_mesh.frag");
@@ -167,9 +168,10 @@ int main()
         glUniformMatrix4fv(loc, 1, GL_FALSE, MatrixToFloat(world));
 		glUniform1i(loc2, app.object_index);// Set the value of the uniform variable u_mode to the value of app.object_index
 
-		glBindVertexArray(mesh_vao);// Bind the VAO to use the state we recorded earlier
-
-		glDrawArrays(GL_TRIANGLES, 0, plane.positions.size());// Draw the mesh using the positions VBO
+        const Mesh& mesh = meshes[app.object_index];
+        glBindVertexArray(mesh.vao);
+        glDrawArrays(GL_TRIANGLES, 0, mesh.index_count);
+		
 		// normals and texture coordinates are not used in this draw call, but they are still bound to the VAO and can be used in the shader if needed so thats what we are going to do now
 		// we can use the normals and texture coordinates in the shader by using the layout(location = 1) and layout(location = 2) qualifiers in the vertex shader to specify which attribute location to use for the normals and texture coordinates
 		// we can also use the normals and texture coordinates in the fragment shader by using the in qualifier to specify which attribute location to use for the normals and texture coordinates
