@@ -81,7 +81,9 @@ int main()
     Init(&app);
 
     Mesh plane;
+    Mesh head;
     LoadMesh(&plane, "./assets/meshes/plane.obj");
+    LoadMesh(&head, "./assets/meshes/head.obj"); 
     
     GLuint mesh_vao = GL_NONE;
     GLuint mesh_positions_vbo = GL_NONE;
